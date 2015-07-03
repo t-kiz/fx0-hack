@@ -1,0 +1,22 @@
+{
+  "name": "fx0-hack",
+  "version": "1.0.0",
+  "author": {
+    "name": "Masayuki IZUMI",
+    "email": "masayuki@izumin.info",
+    "url": "https://github.com/izumin5210"
+  },
+  "contributors": [
+    {
+      "name": "ShutoMikami",
+      "url": "https://github.com/kakenn"
+    }
+  ],
+  "license": {
+    "type": "MIT",
+    "url": "http://izumin.mit-license.org/2015"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
