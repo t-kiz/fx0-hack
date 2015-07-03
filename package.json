@@ -16,7 +16,10 @@
     "type": "MIT",
     "url": "http://izumin.mit-license.org/2015"
   },
+  "main": "./server/build/index.js",
   "scripts": {
+    "build:server": "babel server/src --out-dir server/build",
+    "serve": "node server/build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
