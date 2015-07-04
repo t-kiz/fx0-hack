@@ -1,40 +1,73 @@
-function preload() {
-  sound = loadSound('music2.mp3');
-}
+var ctx;
+var buf;
+var fft;
+var samples = 128;
+var setup2 = false;
 
 function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
-  sound.amp(0.05);
-  sound.loop();
-  fft = new p5.FFT();
-  fft.smooth(0.2);
+  console.log("setup");
   colorMode(HSL);
+  init();
 }
-
-function draw(){
-  noStroke();
-  var spectrum = fft.analyze();
-  if(screen.mozOrientation != 'landscape'){
-    blendMode(BLEND);
-    background(200, 100, 50, 1);
-    for (var i = 0; i< spectrum.length; i++){
-      var x = map(i, 0, spectrum.length, 0, width);
-      var h = - width + map(spectrum[i], 0, 255, width, 0);
-      var c = color(255-spectrum[i]*2.5, 100, 80, spectrum[i]/200);
-      fill(c);
-      rect(width/2,x*3, h, 5 );
-      rect(width/2,x*3, -h, 5 );
+function init() {
+  console.log("initing");
+    try {
+        ctx = new AudioContext();
+        loadFile();
+    } catch(e) {
+        alert('you need webaudio support' + e);
     }
-  }else{
+}
+//load the mp3 file
+function loadFile() {
+    console.log("loadFile");
+    var req = new XMLHttpRequest();
+    req.open("GET","music.mp3",true);
+    //we can't use jquery because we need the arraybuffer type
+    req.responseType = "arraybuffer";
+    req.onload = function() {
+        //decode the loaded data
+        ctx.decodeAudioData(req.response, function(buffer) {
+            buf = buffer;
+            play();
+        });
+    };
+    req.send();
+}
+function play() {
+    //create a source node from the buffer
+    console.log("play");
+    var src = ctx.createBufferSource();
+    src.buffer = buf;
+
+    //create fft
+    fft = ctx.createAnalyser();
+    fft.fftSize = samples;
+
+    //connect them up into a chain
+    src.connect(fft);
+    fft.connect(ctx.destination);
+
+    //play immediately
+    src.start();
+    setup2 = true;
+}
+function draw(){
+  if(setup2){
+    noStroke();
+    var data = new Uint8Array(samples);
+    fft.getByteFrequencyData(data);
     blendMode(BLEND);
-    background(100, 100, 50, 1);
+    background(0, 100, 30);
     blendMode(ADD);
-    for (var i = 0; i< spectrum.length; i++){
-      var x = map(i, 0, spectrum.length, 0, width);
-      var h = - height + map(spectrum[i], 0, 255, height, 0);
-      var c = color(255-spectrum[i]*2.5, 100, 50, spectrum[i]/200);
+    for (var i = 0; i< data.length; i++){
+      var x = map(i, 0, data.length, 0, width);
+      var h = - width/2 + map(data[i], 0, 255, width/2, 0);
+      var c = color(data[i]*2.5, 60, 40, 1);
       fill(c);
-      rect(x*3, height, 5, h);
+      rect(width/2,i*10, h, 10);
+      rect(width/2,height-(i*10), -h, 10);
     }
   }
 
