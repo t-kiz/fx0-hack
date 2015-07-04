@@ -23,6 +23,9 @@ export default class WebSocketServer {
   }
 
   disconnect(disconnectedClient) {
+    if (this.clients[0].id === disconnectedClient.id) {
+      this.startedAt = undefined;
+    }
     this.clients = _.reject(this.clients, (client) => client.id === disconnectedClient.id);
     console.log(`disconnected: ${disconnectedClient.id}`);
     this.prinntConnections();
@@ -37,7 +40,7 @@ export default class WebSocketServer {
   synchronize() {
     let n = this.clients.length;
     _.forEach(this.clients, (client, i) => {
-      let spendTime = ((this.startedAt !== undefined) ? (Date.now() - this.startedAt - client.getMeanDelay()) : null)
+      let spendTime = ((this.startedAt !== undefined) ? (Date.now() - this.startedAt + client.getMeanDelay()) : null)
       let msg = {
         id: client.id,
         delay: client.getMeanDelay(),
