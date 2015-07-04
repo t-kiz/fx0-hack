@@ -1,66 +1,61 @@
-var deg = 0;
-var addDeg = 0;
-var filter;
-var ctx;
-var buf;
-var fft;
-var samples = 128;
-var setup2 = false;
+
+var analyser;
+var addDeg;
 var socket;
-var positionNum,connectNum,delay;
-var startFlag = false;
-initWebSocket();
-var seekTime = 0;
+var init = false;
+var filter;
+var source,player,audioContext;
+var deg;
+
+/*=========
+  FFT周り
+=========*/
+function createAnalyser(){
+  console.log("createAnalyser");
+  player = document.querySelector("audio");
+  audioContext = new AudioContext();
+  source = audioContext.createMediaElementSource(player);
+  var an = audioContext.createAnalyser();
+  source.connect(audioContext.destination);
+  an.fftSize = 256;
+  an.minDecibels = -140;
+  an.maxDecibels = -10;
+  source.connect(an);
+  return an;
+}
+function getData(){
+  //  var data = new Float32Array(analyser.frequencyBinCount);
+  var data = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(data);
+  return data;
+}
+
+
+/*=========
+  p5.js
+=========*/
 
 function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
-  console.log("setup");
+  analyser = createAnalyser();
   colorMode(HSL);
-  init();
-}
-function init() {
-  console.log("initing");
-    try {
-        ctx = new AudioContext();
-        loadFile();
-    } catch(e) {
-        alert('you need webaudio support' + e);
-    }
-}
-//load the mp3 file
-function loadFile() {
-    console.log("loadFile");
-    var req = new XMLHttpRequest();
-    req.open("GET","music.mp3",true);
-    //we can't use jquery because we need the arraybuffer type
-    req.responseType = "arraybuffer";
-    req.onload = function() {
-        //decode the loaded data
-        ctx.decodeAudioData(req.response, function(buffer) {
-            buf = buffer;
-            play();
-        });
-    };
-    req.send();
-}
-function play() {
-    soundPlayer();
-    if(positionNum==0 && startFlag!=true){
-      startFlag = true;
-      socket.emit('Client::REQUEST_PLAY',Date.now());
-    }
+  initWebSocket();
+  player.play();
+  init = true;
 }
 function draw(){
-  if(setup2){
-    filter.frequency.value = addDeg*100;
+  if(init){
     drewer();
   }
-
 }
-
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
+
+
+/*=========
+  websocket
+=========*/
 
 function initWebSocket() {
   socket = io('http://192.168.0.47:3000');
@@ -74,25 +69,18 @@ function initWebSocket() {
   });
 
   socket.on("Server::SYNCHRONIZE", function(msg) {
-    // { id: '1M1s6Hv54hwcvAjOAAAA', delay: -544.6, index: 0, clientCount: 2 }
-    // index: zero based numbering
     console.log(msg);
     delay=msg.delay;
     positionNum=msg.index;
     connectNum=msg.clientCount;
-    if(setup2 && msg.index==0 && startFlag != true){
-      startFlag = True;
+    if(positionNum == 0){
       socket.emmit('start',Date.now());
-    }else if(msg.index!=0){
-       if(msg.spendTime== null){
-         location.reload();
-       }else{
-         seekTime = msg.spendTime;
-         if(setup2){
-              start();
-         }
-
-       }
+    }else{
+      if(msg.spendTime){
+        player.currentTime = msg.spendTime;
+      }else{
+        location.reload();
+      }
     }
   });
 }

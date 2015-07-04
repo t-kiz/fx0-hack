@@ -3,8 +3,7 @@ function drewer(){
   rotate(deg);
   scale(0.5);
   noStroke();
-  var data = new Uint8Array(samples);
-  fft.getByteFrequencyData(data);
+  var data = getData();
   blendMode(BLEND);
   background(0, 100, 30);
   blendMode(ADD);
