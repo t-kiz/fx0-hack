@@ -55,7 +55,7 @@ export default class WebSocketServer {
     this.startedAt = time;
     _.forEach(this.clients, (client) => {
       if (client.id !== master.id) {
-        client.socket.emit(BROADCAST_PLAY_TIME, time + this.getMeanDelay());
+        client.socket.emit(BROADCAST_PLAY_TIME, time + client.getMeanDelay());
       }
     });
   }
