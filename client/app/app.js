@@ -4,7 +4,8 @@ var fft;
 var samples = 128;
 var setup2 = false;
 initWebSocket();
-
+var test = 1000;
+var filter;
 function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
   console.log("setup");
@@ -45,16 +46,27 @@ function play() {
     //create fft
     fft = ctx.createAnalyser();
     fft.fftSize = samples;
-
+    
+    //create filter
+    filter = ctx.createBiquadFilter();
+    
     //connect them up into a chain
+    src.connect(filter);
     src.connect(fft);
-    fft.connect(ctx.destination);
-
+    filter.connect(ctx.destination);
+    
+    filter.type = "lowshelf";
+    filter.frequency.value = 1000;
+    filter.gain.value = 25;
+    
     //play immediately
     src.start();
     setup2 = true;
 }
 function draw(){
+  filter.frequency.value = test;
+    test+=1;
+    test%=2000;
   if(setup2){
     drewer();
   }
