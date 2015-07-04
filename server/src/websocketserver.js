@@ -1,7 +1,9 @@
 import Server from "socket.io";
+import Client from "./client";
 
 export default class WebSocketServer {
   constructor(port) {
+    this.clients = [];
     this.io = new Server();
     this.io.on("connection", this.onConnect.bind(this));
   }
@@ -11,6 +13,7 @@ export default class WebSocketServer {
   }
 
   onConnect(socket) {
+    this.clients.push(new Client(socket));
     console.log("connect!");
     socket.on("chat message", this.onChatMessage.bind(this));
     socket.on("disconnect", this.onDisconnect.bind(this));
