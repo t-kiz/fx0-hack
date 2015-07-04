@@ -36,11 +36,13 @@ export default class WebSocketServer {
   synchronize() {
     let n = this.clients.length;
     _.forEach(this.clients, (client, i) => {
+      let spendTime = ((this.startedAt !== undefined) ? (Date.now() - this.startedAt) : null)
       let msg = {
         id: client.id,
         delay: client.getMeanDelay(),
         index: i,
-        clientCount: n
+        clientCount: n,
+        spendTime: spendTime
       };
       console.log(msg);
       client.socket.emit(SYNCHRONIZE, msg);
@@ -48,6 +50,7 @@ export default class WebSocketServer {
   }
 
   broadcastPlayTime(master, time) {
+    this.startedAt = time;
     _.forEach(this.clients, (client) => {
       if (client.id !== master.id) {
         client.socket.emit(BROADCAST_PLAY_TIME, time + this.getMeanDelay());
