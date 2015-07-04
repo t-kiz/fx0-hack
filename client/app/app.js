@@ -74,7 +74,7 @@ function initWebSocket() {
     positionNum=msg.index;
     connectNum=msg.clientCount;
     if(positionNum == 0){
-      socket.emmit('start',Date.now());
+      socket.emit('start',Date.now());
     }else{
       if(msg.spendTime){
         player.currentTime = msg.spendTime;
