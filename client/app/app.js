@@ -77,7 +77,7 @@ function initWebSocket() {
   });
 
   socket.on("Server::SYNCHRONIZE", function(msg) {
-    // { delay: -407.8, index: 3, clientCount: 4 }
+    // { id: '1M1s6Hv54hwcvAjOAAAA', delay: -544.6, index: 0, clientCount: 2 }
     // index: zero based numbering
     console.log(msg);
   });

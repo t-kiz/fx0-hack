@@ -37,11 +37,11 @@ export default class WebSocketServer {
     let n = this.clients.length;
     _.forEach(this.clients, (client, i) => {
       let msg = {
+        id: client.id,
         delay: client.getMeanDelay(),
         index: i,
         clientCount: n
       };
-      console.log(`synchronize ${client.id}`);
       console.log(msg);
       client.socket.emit(SYNCHRONIZE, msg);
     });
