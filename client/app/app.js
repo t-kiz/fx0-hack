@@ -10,6 +10,8 @@ var init = false;
 var filter;
 var source,player,audioContext;
 var deg;
+var seekTime = 0;
+var seekTiming = 0;
 
 /*=========
   FFT周り
@@ -73,6 +75,12 @@ function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
   analyser = createAnalyser();
   colorMode(HSL);
+  player.addEventListener('play',function(){
+    if(seekTime!=0){
+      player.currentTime = seekTime + seekTiming - Date.now();
+      console.log("時間変更したった");
+    }
+  })
   initWebSocket();
   player.play();
   init = true;
@@ -107,11 +115,14 @@ function initWebSocket() {
     delay=msg.delay;
     positionNum=msg.index;
     connectNum=msg.clientCount;
-    if(positionNum == 0){
-      socket.emmit('start',Date.now());
+    if(positionNum == 0 && spendTime === null){
+      console.log('Client::REQUEST_PLAY');
+      socket.emit("Client::REQUEST_PLAY", Date.now());
     }else{
       if(msg.spendTime){
-        player.currentTime = msg.spendTime;
+        console.log('時間セット');
+        seekTiming = Date.now();
+        seekTime = msg.spendTime;
       }else{
         location.reload();
       }
