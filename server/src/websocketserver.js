@@ -19,11 +19,12 @@ export default class WebSocketServer {
     this.clients.push(client);
     console.log(`connected: ${client.id}`);
     socket.on("chat message", this.onChatMessage.bind(this));
-    socket.on("disconnect", this.onDisconnect.bind(this));
   }
 
-  onDisconnect() {
-    console.log("disconnect...");
+  disconnect(disconnectedClient) {
+    this.clients = _.reject(this.clients, (client) => client.id === disconnectedClient.id);
+    console.log(`disconnected: ${disconnectedClient.id}`);
+    console.log(_.map(this.clients, (client) => client.id));
   }
 
   onChatMessage(msg) {

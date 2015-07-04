@@ -8,6 +8,7 @@ export default class Client {
     this.delays = [];
     this.id = socket.client.conn.id;
     this.socket.on(INIT_CONNECTION, this.initialize.bind(this));
+    this.socket.on("disconnect", this.onDisconnect.bind(this));
   }
 
   initialize(msg) {
@@ -17,5 +18,9 @@ export default class Client {
 
   getMeanDelay() {
     return _.reduce(this.delays, (sum, d) => sum + d) / this.delays.length;
+  }
+
+  onDisconnect() {
+    this.server.disconnect(this);
   }
 }
