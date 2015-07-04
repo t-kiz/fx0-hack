@@ -72,4 +72,10 @@ function initWebSocket() {
     socket.emit("Client::INITIALIZE_CONNECTION", { remain: --remain, time: Date.now() });
     if (remain === 0) { clearInterval(intervalId); }
   }, 20);
+
+  socket.on("Server::SYNCHRONIZE", function(msg) {
+    // { delay: -407.8, index: 3, clientCount: 4 }
+    // index: zero based numbering
+    console.log(msg);
+  });
 }
