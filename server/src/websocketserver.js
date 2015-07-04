@@ -1,7 +1,7 @@
 import _ from "lodash";
 import Server from "socket.io";
 import Client from "./client";
-import {SYNCHRONIZE} from "./constants";
+import {SYNCHRONIZE, BROADCAST_PLAY_TIME} from "./constants";
 
 export default class WebSocketServer {
   constructor(port) {
@@ -44,6 +44,14 @@ export default class WebSocketServer {
       };
       console.log(msg);
       client.socket.emit(SYNCHRONIZE, msg);
+    });
+  }
+
+  broadcastPlayTime(master, time) {
+    _.forEach(this.clients, (client) => {
+      if (client.id !== master.id) {
+        client.socket.emit(BROADCAST_PLAY_TIME, time + this.getMeanDelay());
+      }
     });
   }
 
