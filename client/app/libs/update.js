@@ -1,9 +1,9 @@
 var deg = 0;
+var addDeg = 0;
 function drewer(){
   translate(windowWidth/2,windowHeight/2);
   rotate(deg);
   scale(0.5);
-  deg+=0.05;
   noStroke();
   var data = new Uint8Array(samples);
   fft.getByteFrequencyData(data);
@@ -19,4 +19,13 @@ function drewer(){
     rect(width/2,i*10-30, h, 10);
     rect(width/2,30+height-(i*10), -h, 10);
   }
+  deg+=addDeg;
+}
+function touchStarted() {
+  addDeg = 0.01 * (windowHeight/touchY);
+  if(addDeg<0) addDeg = 0;
+}
+function touchMoved() {
+  addDeg = 0.01 * (windowHeight/touchY);
+  if(addDeg<0) addDeg = 0;
 }

@@ -22,14 +22,21 @@
         width: 100%;
         overflow: hidden;
       }
+      #mp3File{
+        opacity: 0;
+        position: fixed;
+        z-index: -999;
+      }
     </style>
 
     <script src="libs/update.js" defer></script>
+    <script src="libs/soundplayer.js" defer></script>
     <script src="app.js" defer></script>
 
   </head>
 
   <body>
+  <audio id="mp3File" src="music.mp3" preload="metadata"></audio>
   </body>
 
 </html>
