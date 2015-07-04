@@ -39,14 +39,15 @@ function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
   analyser = createAnalyser();
   colorMode(HSL);
-  initWebSocket();
   player.play();
+  initWebSocket();
   init = true;
 }
 function draw(){
   if(init){
     drewer();
   }
+  console.log(player.currentTime);
 }
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -74,9 +75,11 @@ function initWebSocket() {
     positionNum=msg.index;
     connectNum=msg.clientCount;
     if(positionNum == 0){
+      console.log('Client::REQUEST_PLAY');
       socket.emit("Client::REQUEST_PLAY", Date.now());
     }else{
       if(msg.spendTime){
+        console.log('時間セット');
         player.currentTime = msg.spendTime;
       }else{
         location.reload();
