@@ -25,7 +25,8 @@ export default class WebSocketServer {
   disconnect(disconnectedClient) {
     this.clients = _.reject(this.clients, (client) => client.id === disconnectedClient.id);
     console.log(`disconnected: ${disconnectedClient.id}`);
-    this.prinntConnections()
+    this.prinntConnections();
+    this.synchronize();
   }
 
   onChatMessage(msg) {
