@@ -50,6 +50,7 @@ export default class WebSocketServer {
   }
 
   broadcastPlayTime(master, time) {
+    console.log(`started: ${master.id}`);
     this.startedAt = time;
     _.forEach(this.clients, (client) => {
       if (client.id !== master.id) {
