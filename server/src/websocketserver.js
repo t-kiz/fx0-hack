@@ -15,8 +15,9 @@ export default class WebSocketServer {
   }
 
   onConnect(socket) {
-    this.clients.push(new Client(socket, this));
-    console.log("connect!");
+    let client = new Client(socket, this)
+    this.clients.push(client);
+    console.log(`connected: ${client.id}`);
     socket.on("chat message", this.onChatMessage.bind(this));
     socket.on("disconnect", this.onDisconnect.bind(this));
   }
@@ -38,6 +39,8 @@ export default class WebSocketServer {
         index: i,
         clientCount: n
       };
+      console.log(`synchronize ${client.id}`);
+      console.log(msg);
       client.socket.emit(SYNCHRONIZE, msg);
     });
   }
