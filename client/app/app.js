@@ -67,11 +67,14 @@ function windowResized() {
 
 function initWebSocket() {
   socket = io('http://192.168.0.47:3000');
-  var remain  = 5;
-  var intervalId = setInterval(function() {
-    socket.emit("Client::INITIALIZE_CONNECTION", { remain: --remain, time: Date.now() });
-    if (remain === 0) { clearInterval(intervalId); }
-  }, 20);
+  socket.on("connect", function() {
+    console.log("connect");
+    var remain  = 5;
+    var intervalId = setInterval(function() {
+        socket.emit("Client::INITIALIZE_CONNECTION", { remain: --remain, time: Date.now() });
+        if (remain === 0) { clearInterval(intervalId); }
+    }, 20);
+  });
 
   socket.on("Server::SYNCHRONIZE", function(msg) {
     // { delay: -407.8, index: 3, clientCount: 4 }
