@@ -74,7 +74,7 @@ function initWebSocket() {
     positionNum=msg.index;
     connectNum=msg.clientCount;
     if(positionNum == 0){
-      socket.emit('start',Date.now());
+      socket.emit("Server::SEND_PLAY_TIME", Date.now());
     }else{
       if(msg.spendTime){
         player.currentTime = msg.spendTime;
