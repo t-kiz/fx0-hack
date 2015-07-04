@@ -3,6 +3,9 @@ var buf;
 var fft;
 var samples = 128;
 var setup2 = false;
+var socket;
+var positionNum,connectNum,delay;
+var startFlag = false;
 initWebSocket();
 
 function setup(){
@@ -38,6 +41,10 @@ function loadFile() {
 }
 function play() {
     soundPlayer();
+    if(positionNum==0 && startFlag!=true){
+      startFlag = true;
+      socket.emit('Client::REQUEST_PLAY',Date.now());
+    }
 }
 function draw(){
   if(setup2){
@@ -65,5 +72,12 @@ function initWebSocket() {
     // { id: '1M1s6Hv54hwcvAjOAAAA', delay: -544.6, index: 0, clientCount: 2 }
     // index: zero based numbering
     console.log(msg);
+    delay=msg.delay;
+    positionNum=msg.index;
+    connectNum=msg.clientCount;
+    if(setup2 && msg.index==0 && startFlag != true){
+      startFlag = True;
+      socket.emmit('start',Date.now());
+    }
   });
 }
