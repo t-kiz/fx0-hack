@@ -9,7 +9,7 @@ var feedback;
 var init = false;
 var filter;
 var source,player,audioContext;
-var deg;
+var deg=0;
 var seekTime = 0;
 var seekTiming = 0;
 
@@ -74,18 +74,13 @@ function getData(){
 function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
   analyser = createAnalyser();
+  console.log("曲のロード完了");
   colorMode(HSL);
-  player.addEventListener('play',function(){
-    if(seekTime!=0){
-      player.currentTime = seekTime + seekTiming - Date.now();
-      console.log("時間変更したった");
-    }
-  })
   initWebSocket();
-  player.play();
   init = true;
 }
 function draw(){
+  console.log(player.currentTime);
   if(init){
     drewer();
   }
@@ -118,11 +113,15 @@ function initWebSocket() {
     if(positionNum == 0 && msg.spendTime == null){
       console.log('Client::REQUEST_PLAY');
       socket.emit("Client::REQUEST_PLAY", Date.now());
+      player.play(0);
     }else{
       if(msg.spendTime){
+        player.play(msg.spendTime/1000);
+        setTimeout(function(time){
+          player.currentTime = time/1000+4.5;
+          console.log('時間セット2');
+        }, 5000,msg.spendTime);
         console.log('時間セット');
-        seekTiming = Date.now();
-        seekTime = msg.spendTime;
       }else{
         location.reload();
       }
