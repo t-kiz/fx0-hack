@@ -1,3 +1,6 @@
+var deg = 0;
+var addDeg = 0;
+var filter;
 var ctx;
 var buf;
 var fft;
@@ -48,6 +51,7 @@ function play() {
 }
 function draw(){
   if(setup2){
+    filter.frequency.value = addDeg*100;
     drewer();
   }
 

@@ -1,5 +1,3 @@
-var deg = 0;
-var addDeg = 0;
 function drewer(){
   translate(windowWidth/2,windowHeight/2);
   rotate(deg);
@@ -26,6 +24,10 @@ function touchStarted() {
   if(addDeg<0) addDeg = 0;
 }
 function touchMoved() {
-  addDeg = 0.01 * (windowHeight/touchY);
+  addDeg = 1 * (windowHeight/touchY);
   if(addDeg<0) addDeg = 0;
+}
+
+function touchEnded() {
+  addDeg = 0;
 }
