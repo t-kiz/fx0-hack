@@ -24,7 +24,7 @@ function init() {
 function loadFile() {
     console.log("loadFile");
     var req = new XMLHttpRequest();
-    req.open("GET","music2.mp3",true);
+    req.open("GET","music.mp3",true);
     //we can't use jquery because we need the arraybuffer type
     req.responseType = "arraybuffer";
     req.onload = function() {
