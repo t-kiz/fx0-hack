@@ -117,8 +117,10 @@ function initWebSocket() {
     }else{
       if(msg.spendTime){
         player.play(msg.spendTime/1000);
+        player.volume = 0;
         setTimeout(function(time){
           player.currentTime = time/1000+4.5;
+          player.volume = 1;
           console.log('時間セット2');
         }, 5000,msg.spendTime);
         console.log('時間セット');
