@@ -2,10 +2,16 @@
 var analyser;
 var addDeg;
 var socket;
+var delay;
+var wetlevel;
+var drylevel;
+var feedback;
 var init = false;
 var filter;
 var source,player,audioContext;
 var deg;
+var seekTime = 0;
+var seekTiming = 0;
 
 /*=========
   FFT周り
@@ -16,7 +22,37 @@ function createAnalyser(){
   audioContext = new AudioContext();
   source = audioContext.createMediaElementSource(player);
   var an = audioContext.createAnalyser();
-  source.connect(audioContext.destination);
+  var effectNumber = 2;
+  if(effectNumber == 1){
+       //create filter
+       filter = audioContext.createBiquadFilter();
+    
+       //connect them up into a chain
+       source.connect(filter);
+       filter.connect(audioContext.destination);
+    
+       filter.type = "lowshelf";
+       filter.gain.value = 25;
+
+
+  }
+  else if(effectNumber == 2){
+        delay = audioContext.createDelay();
+        wetlevel = audioContext.createGain();
+        drylevel = audioContext.createGain();
+        feedback = audioContext.createGain();
+        source.connect(delay);
+        source.connect(drylevel);
+        delay.connect(wetlevel);
+        delay.connect(feedback);
+        feedback.connect(delay);
+        wetlevel.connect(audioContext.destination);
+        drylevel.connect(audioContext.destination);
+        delay.delayTime.value = 0.25;
+        feedback.gain.value = 0.4;
+        wetlevel.gain.value = 0.5;
+        drylevel.gain.value = 0.5;
+  }
   an.fftSize = 256;
   an.minDecibels = -140;
   an.maxDecibels = -10;
@@ -24,7 +60,6 @@ function createAnalyser(){
   return an;
 }
 function getData(){
-  //  var data = new Float32Array(analyser.frequencyBinCount);
   var data = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(data);
   return data;
@@ -35,19 +70,25 @@ function getData(){
   p5.js
 =========*/
 
+
 function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
   analyser = createAnalyser();
   colorMode(HSL);
-  player.play();
+  player.addEventListener('play',function(){
+    if(seekTime!=0){
+      player.currentTime = seekTime + seekTiming - Date.now();
+      console.log("時間変更したった");
+    }
+  })
   initWebSocket();
+  player.play();
   init = true;
 }
 function draw(){
   if(init){
     drewer();
   }
-  console.log(player.currentTime);
 }
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -74,13 +115,14 @@ function initWebSocket() {
     delay=msg.delay;
     positionNum=msg.index;
     connectNum=msg.clientCount;
-    if(positionNum == 0){
+    if(positionNum == 0 && spendTime === null){
       console.log('Client::REQUEST_PLAY');
       socket.emit("Client::REQUEST_PLAY", Date.now());
     }else{
       if(msg.spendTime){
         console.log('時間セット');
-        player.currentTime = msg.spendTime;
+        seekTiming = Date.now();
+        seekTime = msg.spendTime;
       }else{
         location.reload();
       }
