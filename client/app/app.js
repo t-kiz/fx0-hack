@@ -3,6 +3,7 @@ var buf;
 var fft;
 var samples = 128;
 var setup2 = false;
+initWebSocket();
 
 function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
@@ -75,4 +76,14 @@ function draw(){
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function initWebSocket() {
+  socket = io('http://192.168.0.47:3000');
+  var count = 0;
+  var intervalId = setInterval(function() {
+    socket.emit("Server::INITIALIZE_CONNECTION", Date.now());
+    count++;
+    if (count > 4) { clearInterval(intervalId); }
+  }, 20);
 }
