@@ -36,7 +36,7 @@ export default class WebSocketServer {
   synchronize() {
     let n = this.clients.length;
     _.forEach(this.clients, (client, i) => {
-      let spendTime = ((this.startedAt !== undefined) ? (Date.now() - this.startedAt) : null)
+      let spendTime = ((this.startedAt !== undefined) ? (Date.now() - this.startedAt - client.getMeanDelay()) : null)
       let msg = {
         id: client.id,
         delay: client.getMeanDelay(),
