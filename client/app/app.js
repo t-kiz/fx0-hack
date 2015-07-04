@@ -26,11 +26,11 @@ function createAnalyser(){
   if(effectNumber == 1){
        //create filter
        filter = audioContext.createBiquadFilter();
-    
+
        //connect them up into a chain
        source.connect(filter);
        filter.connect(audioContext.destination);
-    
+
        filter.type = "lowshelf";
        filter.gain.value = 25;
 
@@ -115,7 +115,7 @@ function initWebSocket() {
     delay=msg.delay;
     positionNum=msg.index;
     connectNum=msg.clientCount;
-    if(positionNum == 0 && spendTime === null){
+    if(positionNum == 0 && msg.spendTime == null){
       console.log('Client::REQUEST_PLAY');
       socket.emit("Client::REQUEST_PLAY", Date.now());
     }else{
