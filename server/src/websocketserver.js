@@ -18,13 +18,14 @@ export default class WebSocketServer {
     let client = new Client(socket, this)
     this.clients.push(client);
     console.log(`connected: ${client.id}`);
+    this.prinntConnections()
     socket.on("chat message", this.onChatMessage.bind(this));
   }
 
   disconnect(disconnectedClient) {
     this.clients = _.reject(this.clients, (client) => client.id === disconnectedClient.id);
     console.log(`disconnected: ${disconnectedClient.id}`);
-    console.log(_.map(this.clients, (client) => client.id));
+    this.prinntConnections()
   }
 
   onChatMessage(msg) {
@@ -44,5 +45,9 @@ export default class WebSocketServer {
       console.log(msg);
       client.socket.emit(SYNCHRONIZE, msg);
     });
+  }
+
+  prinntConnections() {
+    console.log(_.map(this.clients, (client) => client.id));
   }
 }
