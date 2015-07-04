@@ -80,10 +80,9 @@ function windowResized() {
 
 function initWebSocket() {
   socket = io('http://192.168.0.47:3000');
-  var count = 0;
+  var remain  = 5;
   var intervalId = setInterval(function() {
-    socket.emit("Server::INITIALIZE_CONNECTION", Date.now());
-    count++;
-    if (count > 4) { clearInterval(intervalId); }
+    socket.emit("Client::INITIALIZE_CONNECTION", { remain: --remain, time: Date.now() });
+    if (remain === 0) { clearInterval(intervalId); }
   }, 20);
 }

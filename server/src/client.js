@@ -10,9 +10,7 @@ export default class Client {
   }
 
   initialize(msg) {
-    this.delays.push(Date.now() - msg);
-    console.log(this.delays);
-    console.log(this.getMeanDelay());
+    this.delays.push(Date.now() - msg.time);
   }
 
   getMeanDelay() {
