@@ -13,6 +13,6 @@ function soundPlayer(){
   fft.connect(ctx.destination);
 
   //play immediately
-  src.start();
+  src.start(seekTime);
   setup2 = true;
 }

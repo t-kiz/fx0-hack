@@ -7,6 +7,7 @@ var socket;
 var positionNum,connectNum,delay;
 var startFlag = false;
 initWebSocket();
+var seekTime = 0;
 
 function setup(){
   cnv = createCanvas(windowWidth, windowHeight);
@@ -78,6 +79,16 @@ function initWebSocket() {
     if(setup2 && msg.index==0 && startFlag != true){
       startFlag = True;
       socket.emmit('start',Date.now());
+    }else if(msg.index!=0){
+       if(msg.spendTime== null){
+         location.reload();
+       }else{
+         seekTime = msg.spendTime;
+         if(setup2){
+              start();
+         }
+
+       }
     }
   });
 }
